@@ -1,0 +1,66 @@
+name: Repository Bootstrap
+
+on:
+  workflow_dispatch:
+    inputs:
+      owner:
+        description: Repository owner.
+        required: true
+        type: string
+
+      repository:
+        description: Repository name.
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: repository-bootstrap-${{ inputs.owner }}-${{ inputs.repository }}
+  cancel-in-progress: false
+
+jobs:
+  bootstrap:
+    name: Bootstrap Repository
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Authenticate as GitHub App
+        id: authenticate
+        uses: ./.github/actions/authenticate
+        with:
+          app-id: ${{ secrets.ENGINEERING_LAB_APP_ID }}
+          private-key: ${{ secrets.ENGINEERING_LAB_APP_PRIVATE_KEY }}
+          owner: ${{ inputs.owner }}
+          repositories: ${{ inputs.repository }}
+
+      - name: Validate target repository
+        env:
+          GH_TOKEN: ${{ steps.authenticate.outputs.token }}
+        run: |
+          gh api \
+            repos/${{ inputs.owner }}/${{ inputs.repository }} \
+            --jq '.full_name'
+
+      - name: Generate workflow summary
+        run: |
+          {
+            echo "# Repository Bootstrap"
+            echo
+            echo "## Target Repository"
+            echo
+            echo "- Owner: ${{ inputs.owner }}"
+            echo "- Repository: ${{ inputs.repository }}"
+            echo
+            echo "## Authentication"
+            echo
+            echo "✅ Installation Token generated successfully"
+            echo
+            echo "## Repository Validation"
+            echo
+            echo "✅ Repository found"
+          } >> "$GITHUB_STEP_SUMMARY"
