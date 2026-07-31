@@ -46,21 +46,9 @@ jobs:
             repos/${{ inputs.owner }}/${{ inputs.repository }} \
             --jq '.full_name'
 
-      - name: Generate workflow summary
-        run: |
-          {
-            echo "# Repository Bootstrap"
-            echo
-            echo "## Target Repository"
-            echo
-            echo "- Owner: ${{ inputs.owner }}"
-            echo "- Repository: ${{ inputs.repository }}"
-            echo
-            echo "## Authentication"
-            echo
-            echo "✅ Installation Token generated successfully"
-            echo
-            echo "## Repository Validation"
-            echo
-            echo "✅ Repository found"
-          } >> "$GITHUB_STEP_SUMMARY"
+      - name: Configure rulesets
+        uses: ./.github/actions/configure-rulesets
+        with:
+          owner: ${{ inputs.owner }}
+          repository: ${{ inputs.repository }}
+          token: ${{ steps.authenticate.outputs.token }}
