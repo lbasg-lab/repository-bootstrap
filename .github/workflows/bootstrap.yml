@@ -46,7 +46,14 @@ jobs:
             repos/${{ inputs.owner }}/${{ inputs.repository }} \
             --jq '.full_name'
 
-      - name: Configure rulesets
+      - name: Configure repository settings
+        uses: ./.github/actions/configure-repository
+        with:
+          owner: ${{ inputs.owner }}
+          repository: ${{ inputs.repository }}
+          token: ${{ steps.authenticate.outputs.token }}
+
+      - name: Configure repository rulesets
         uses: ./.github/actions/configure-rulesets
         with:
           owner: ${{ inputs.owner }}

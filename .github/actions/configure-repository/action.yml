@@ -1,0 +1,41 @@
+name: Configure Repository Settings
+
+description: Applies repository settings using repository-bootstrap
+
+inputs:
+  owner:
+    description: Repository owner
+    required: true
+
+  repository:
+    description: Repository name
+    required: true
+
+  token:
+    description: GitHub App installation token
+    required: true
+
+runs:
+  using: composite
+
+  steps:
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.11"
+
+    - name: Install repository bootstrap
+      shell: bash
+      run: |
+        python -m pip install --upgrade pip
+        pip install -e .
+
+    - name: Apply rulesets
+      shell: bash
+      env:
+        GITHUB_TOKEN: ${{ inputs.token }}
+      run: |
+        repository-bootstrap \
+          apply-repository \
+          "${{ inputs.owner }}" \
+          "${{ inputs.repository }}"
