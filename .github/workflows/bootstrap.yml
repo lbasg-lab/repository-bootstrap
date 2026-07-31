@@ -33,8 +33,8 @@ jobs:
         id: authenticate
         uses: ./.github/actions/authenticate
         with:
-          app-id: ${{ secrets.ENGINEERING_LAB_APP_ID }}
-          private-key: ${{ secrets.ENGINEERING_LAB_APP_PRIVATE_KEY }}
+          app-id: ${{ secrets.BOOTSTRAP_APP_ID }}
+          private-key: ${{ secrets.BOOTSTRAP_PRIVATE_KEY }}
           owner: ${{ inputs.owner }}
           repositories: ${{ inputs.repository }}
 
