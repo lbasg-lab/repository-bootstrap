@@ -1,4 +1,5 @@
 name: Repository Bootstrap
+run-name: Repository ${{ inputs.owner }}/${{ inputs.repository }} Bootstrap
 
 on:
   workflow_dispatch:
